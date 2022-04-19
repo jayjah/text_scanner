@@ -53,6 +53,7 @@ class _TextDetectorState extends State<TextDetector> {
       child = SingleChildScrollView(
         child: Column(
           children: [
+            // TODO(jayjah): add close button and re init startup method
             spacer,
             const Text('Text to translate:'),
             for (final content in textInImage) Center(child: Text(content)),
