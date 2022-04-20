@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart' show showCupertinoDialog;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemChannels;
 
+/// Navigator Key
+///   Should be used in a [MaterialApp], otherwise [AppDialogs] will fail to show any dialog!
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
 /// Simple Dialogs class, which uses internally [navigatorKey] for BuildContext reference
@@ -13,6 +15,9 @@ class AppDialogs {
   final Widget _divider = const VerticalDivider();
 
   Future<bool> showDialog(String title, String message) async {
+    assert(navigatorKey.currentContext != null,
+        'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
+
     return await showCupertinoDialog<bool>(
           context: navigatorKey.currentContext!,
           builder: (BuildContext context) => Material(
@@ -49,6 +54,9 @@ class AppDialogs {
   }
 
   Future<String> languageCode(String title, String message) async {
+    assert(navigatorKey.currentContext != null,
+        'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
+
     final TextEditingController textController = TextEditingController()
       ..text = 'fr';
 
