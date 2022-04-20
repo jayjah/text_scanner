@@ -6,43 +6,46 @@ import 'package:flutter/services.dart' show SystemChannels;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
+/// Simple Dialogs class, which uses internally [navigatorKey] for BuildContext reference
 class AppDialogs {
   const AppDialogs();
+  final Widget _spacer = const Spacer();
+  final Widget _divider = const VerticalDivider();
 
   Future<bool> showDialog(String title, String message) async {
-    final bool? result = await showCupertinoDialog<bool>(
-        context: navigatorKey.currentContext!,
-        builder: (BuildContext context) => Material(
-              child: Column(
-                children: <Widget>[
-                  const Spacer(),
-                  Center(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+    return await showCupertinoDialog<bool>(
+          context: navigatorKey.currentContext!,
+          builder: (BuildContext context) => Material(
+            child: Column(
+              children: <Widget>[
+                _spacer,
+                Center(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const VerticalDivider(),
-                  Center(
-                    child: Text(
-                      message,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+                ),
+                _divider,
+                Center(
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const _YesNoButtons(),
-                  const _CloseButton(),
-                  const Spacer(),
-                ],
-              ),
-            ));
-
-    return result == true;
+                ),
+                const _YesNoButtons(),
+                const _CloseButton(),
+                _spacer,
+              ],
+            ),
+          ),
+        ) ==
+        true;
   }
 
   Future<String> languageCode(String title, String message) async {
@@ -50,50 +53,51 @@ class AppDialogs {
       ..text = 'fr';
 
     await showCupertinoDialog<String>(
-        context: navigatorKey.currentContext!,
-        builder: (BuildContext context) => Scaffold(
-              resizeToAvoidBottomInset: true,
-              body: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                child: Column(
-                  children: <Widget>[
-                    const Spacer(),
-                    Center(
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    const VerticalDivider(),
-                    Center(
-                      child: Text(
-                        message,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    TextField(
-                      controller: textController,
-                    ),
-                    TextButton(
-                      onPressed: Navigator.of(context).maybePop,
-                      child: const Text(
-                        'Ok',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    const Spacer(),
-                  ],
+      context: navigatorKey.currentContext!,
+      builder: (BuildContext context) => Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            children: <Widget>[
+              _spacer,
+              Center(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ));
+              _divider,
+              Center(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              TextField(
+                controller: textController,
+              ),
+              TextButton(
+                onPressed: Navigator.of(context).maybePop,
+                child: const Text(
+                  'Ok',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              _spacer,
+            ],
+          ),
+        ),
+      ),
+    );
 
+    // Storing text temporary from [textController] to close it afterwards
     final String text = textController.text;
     textController.dispose();
 
@@ -101,6 +105,7 @@ class AppDialogs {
   }
 }
 
+// Simple yes - no buttons
 class _YesNoButtons extends StatelessWidget {
   const _YesNoButtons({Key? key}) : super(key: key);
 
@@ -129,6 +134,7 @@ class _YesNoButtons extends StatelessWidget {
   }
 }
 
+// Simple close app button
 class _CloseButton extends StatelessWidget {
   const _CloseButton({Key? key}) : super(key: key);
 

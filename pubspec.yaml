@@ -13,7 +13,6 @@ dependencies:
   google_ml_kit: ^0.7.3
   image_picker: ^0.8.5
   learning_translate: ^0.0.4
-  #translator: ^0.1.7
 
 dev_dependencies:
   flutter_test:

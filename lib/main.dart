@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:text_in_image_detector/dialogs.dart';
 import 'package:text_in_image_detector/text_detector.dart';
 
+/// Main entry point - just starts below [App] widget
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -18,7 +19,9 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const TextDetectorWidget(dialogHandler: AppDialogs()),
+      home: const TextDetectorWidget(
+        dialogHandler: AppDialogs(),
+      ),
     );
   }
 }
