@@ -4,11 +4,15 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:text_in_image_detector/router.dart';
+import 'package:learning_translate/learning_translate.dart';
+import 'package:text_in_image_detector/dialogs.dart' show AppDialogs;
 
 class TextDetectorWidget extends StatefulWidget {
-  const TextDetectorWidget({Key? key}) : super(key: key);
-
+  const TextDetectorWidget({
+    Key? key,
+    required this.dialogHandler,
+  }) : super(key: key);
+  final AppDialogs dialogHandler;
   @override
   _TextDetectorState createState() => _TextDetectorState();
 }
@@ -18,7 +22,7 @@ class _TextDetectorState extends State<TextDetectorWidget> {
   bool translating = false;
   String? textInImage;
   String? translatedText;
-
+  String? languageIdentifier;
   @override
   void initState() {
     _initStuff();
@@ -32,14 +36,18 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     translating = false;
     textInImage = null;
     translatedText = null;
+    languageIdentifier = null;
     if (setNewState) setState(() {});
 
     // ensure it gets called on next frame
     Future<void>.microtask(() async {
-      final ImageSource imageSource = (await AppRouter.showDialog(
+      final ImageSource imageSource = (await widget.dialogHandler.showDialog(
               'Pick image', 'Do you want to pick an image from gallery?'))
           ? ImageSource.gallery
           : ImageSource.camera;
+
+      languageIdentifier = await widget.dialogHandler.languageCode('Language',
+          'Which language should be translated from?\nImportant: Just specify language identifier, e.G. English=en, french=fr, italian=it, espanol=es, portuguese=pt etc.');
       pickImage(imageSource).then(readTextFromImage);
     });
   }
@@ -73,15 +81,31 @@ class _TextDetectorState extends State<TextDetectorWidget> {
       );
     else
       child = SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           children: <Widget>[
+            spacer,
             _closeButton,
             spacer,
-            const Text('Text to translate:'),
+            const Text(
+              'Text to translate:',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                decoration: TextDecoration.underline,
+              ),
+            ),
             if (textInImage != null) Center(child: Text(textInImage!)),
             spacer,
             if (translatedText != null) ...<Widget>[
-              const Text('Translated text:'),
+              const Text(
+                'Translated text:',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
               Text(translatedText!)
             ] else
               const Text('Could not translate text'),
@@ -99,6 +123,7 @@ class _TextDetectorState extends State<TextDetectorWidget> {
   Widget get _closeButton => Align(
         alignment: Alignment.centerRight,
         child: IconButton(
+          color: Colors.red,
           onPressed: () => _initStuff(setNewState: true),
           icon: const Icon(Icons.close),
         ),
@@ -119,13 +144,14 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     textInImage = recognizedText.text;
 
     // get first detected language
-    final String detectedLanguage = recognizedText.blocks
+    /*final String detectedLanguage = recognizedText.blocks
         .firstWhere(
             (TextBlock element) => element.recognizedLanguages.first.isNotEmpty)
         .recognizedLanguages
-        .first;
+        .first;*/
     // an alternative may be:
     // await GoogleMlKit.nlp.languageIdentifier().identifyLanguage(textInImage!);
+    // Currently just make it available via a dialog
 
     // set specific new state variables
     loading = false;
@@ -133,7 +159,7 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     if (mounted) setState(() {});
 
     textRecognizer.close();
-    translateText(fromLanguage: detectedLanguage, toLanguage: 'en');
+    translateText(fromLanguage: languageIdentifier!, toLanguage: 'en');
   }
 
   Future<void> translateText(
@@ -153,7 +179,14 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     // translate text with google ml kit
     final OnDeviceTranslator translator = GoogleMlKit.nlp.onDeviceTranslator(
         sourceLanguage: fromLanguage, targetLanguage: toLanguage);
-    translatedText = await translator.translateText(textInImage!);
+    try {
+      translatedText = await translator.translateText(textInImage!);
+    } catch (e) {
+      final Translator translator =
+          Translator(from: fromLanguage, to: toLanguage);
+      translatedText = await translator.translate(textInImage!);
+      translator.dispose();
+    }
 
     // update state
     translating = false;
