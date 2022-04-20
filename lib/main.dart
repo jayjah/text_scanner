@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:text_in_image_detector/router.dart';
 import 'package:text_in_image_detector/text_detector.dart';
 
 Future<void> main() async {
@@ -13,10 +14,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Text Detector',
+      navigatorKey: AppRouter.navigatorKey,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
-      home: const TextDetector(),
+      home: const TextDetectorWidget(),
     );
   }
 }
