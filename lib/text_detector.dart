@@ -74,6 +74,9 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     const Widget spacer = SizedBox(
       height: 55,
     );
+    const TextStyle helperOrErrorStyle = TextStyle(
+      fontSize: 16,
+    );
 
     // build child widget from internal state
     late final Widget child;
@@ -87,13 +90,19 @@ class _TextDetectorState extends State<TextDetectorWidget> {
           spacer,
           _closeButton,
           const Center(
-            child: Text('No text in image detected'),
+            child: Text(
+              'ERROR - No text in image detected',
+              style: helperOrErrorStyle,
+            ),
           ),
         ],
       );
     else if (_translating)
       child = const Center(
-        child: Text('Text is being translated...'),
+        child: Text(
+          'Please wait, text is being translated...',
+          style: helperOrErrorStyle,
+        ),
       );
     else /* show text from the image and the translated text, if available */
       child = SingleChildScrollView(
@@ -103,15 +112,21 @@ class _TextDetectorState extends State<TextDetectorWidget> {
             spacer,
             _closeButton,
             spacer,
-            const Text(
-              'Text to translate:',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                decoration: TextDecoration.underline,
+            if (textInImage != null) ...<Widget>[
+              const Text(
+                'Text to translate:',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  decoration: TextDecoration.underline,
+                ),
               ),
-            ),
-            if (textInImage != null) Center(child: Text(textInImage!)),
+              Center(child: Text(textInImage!)),
+            ] else
+              const Text(
+                'ERROR - No translated text were found',
+                style: helperOrErrorStyle,
+              ),
             spacer,
             if (translatedText != null) ...<Widget>[
               const Text(
@@ -122,9 +137,12 @@ class _TextDetectorState extends State<TextDetectorWidget> {
                   decoration: TextDecoration.underline,
                 ),
               ),
-              Text(translatedText!)
+              Center(child: Text(translatedText!))
             ] else
-              const Text('Could not translate text'),
+              const Text(
+                'ERROR - Could not translate text',
+                style: helperOrErrorStyle,
+              ),
             spacer,
           ],
         ),
