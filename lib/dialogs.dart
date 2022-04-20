@@ -12,6 +12,7 @@ class AppRouter {
         builder: (BuildContext context) => Material(
               child: Column(
                 children: <Widget>[
+                  const Spacer(),
                   Center(
                     child: Text(
                       title,
@@ -21,6 +22,7 @@ class AppRouter {
                       ),
                     ),
                   ),
+                  const VerticalDivider(),
                   Center(
                     child: Text(
                       message,
@@ -31,6 +33,7 @@ class AppRouter {
                     ),
                   ),
                   const _YesNoButtons(),
+                  const Spacer(),
                 ],
               ),
             ));
@@ -44,15 +47,20 @@ class _YesNoButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const TextStyle style = TextStyle(fontSize: 16);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         TextButton(
             onPressed: () => Navigator.of(context).maybePop(false),
-            child: const Text('No')),
+            child: Text(
+              'No',
+              style: style.copyWith(color: Colors.red),
+            )),
         TextButton(
             onPressed: () => Navigator.of(context).maybePop(true),
-            child: const Text('Yes'))
+            child: Text('Yes', style: style.copyWith(color: Colors.green)))
       ],
     );
   }
