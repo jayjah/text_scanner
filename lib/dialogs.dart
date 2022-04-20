@@ -1,9 +1,8 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart' show showCupertinoDialog;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemChannels;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
@@ -95,7 +94,10 @@ class AppDialogs {
               ),
             ));
 
-    return textController.text;
+    final String text = textController.text;
+    textController.dispose();
+
+    return text;
   }
 }
 
@@ -116,8 +118,12 @@ class _YesNoButtons extends StatelessWidget {
               style: style.copyWith(color: Colors.red),
             )),
         TextButton(
-            onPressed: () => Navigator.of(context).maybePop(true),
-            child: Text('Yes', style: style.copyWith(color: Colors.green)))
+          onPressed: () => Navigator.of(context).maybePop(true),
+          child: Text(
+            'Yes',
+            style: style.copyWith(color: Colors.green),
+          ),
+        )
       ],
     );
   }
@@ -129,7 +135,8 @@ class _CloseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => exit(0),
+      onPressed: () =>
+          SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop'),
       child: const Text(
         'Exit App',
         style: TextStyle(fontSize: 16, color: Colors.blue),
