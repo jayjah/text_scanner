@@ -15,27 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  camera:
-    dependency: "direct main"
-    description:
-      name: camera
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.4+19"
-  camera_platform_interface:
-    dependency: transitive
-    description:
-      name: camera_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.5"
-  camera_web:
-    dependency: transitive
-    description:
-      name: camera_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1+3"
   characters:
     dependency: transitive
     description:
@@ -71,13 +50,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.2"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.4"
   fake_async:
     dependency: transitive
     description:
@@ -114,13 +86,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  google_ml_vision:
+  google_ml_kit:
     dependency: "direct main"
     description:
-      name: google_ml_vision
+      name: google_ml_kit
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.7"
+    version: "0.7.3"
   http:
     dependency: transitive
     description:
@@ -219,13 +191,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1+1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -252,13 +217,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   string_scanner:
     dependency: transitive
     description:
@@ -280,13 +238,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.8"
-  translator:
-    dependency: "direct main"
-    description:
-      name: translator
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.7"
   typed_data:
     dependency: transitive
     description:
