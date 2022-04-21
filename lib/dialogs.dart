@@ -53,12 +53,10 @@ class AppDialogs {
         true;
   }
 
-  Future<String> languageCode(String title, String message) async {
+  Future<String> languageCode(String title, String message,
+      TextEditingController textController) async {
     assert(navigatorKey.currentContext != null,
         'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
-
-    final TextEditingController textController = TextEditingController()
-      ..text = 'fr';
 
     await showCupertinoDialog<String>(
       context: navigatorKey.currentContext!,
@@ -104,12 +102,7 @@ class AppDialogs {
         ),
       ),
     );
-
-    // Storing text temporary from [textController] to close it afterwards
-    final String text = textController.text;
-    textController.dispose();
-
-    return text;
+    return textController.text;
   }
 }
 
