@@ -127,9 +127,13 @@ class _TextDetectorState extends State<TextDetectorWidget> {
       child = SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             spacer,
-            _closeButton,
+            _ResetButton(
+              onPressed: () => _initStuff(setNewState: true),
+            ),
             spacer,
             if (textInImage?.isNotEmpty == true) ...<Widget>[
               const Text(
@@ -140,7 +144,10 @@ class _TextDetectorState extends State<TextDetectorWidget> {
                   decoration: TextDecoration.underline,
                 ),
               ),
-              Center(child: Text(textInImage!)),
+              Text(
+                textInImage!,
+                textAlign: TextAlign.center,
+              ),
             ] else
               const Text(
                 'ERROR - No translated text were found',
@@ -156,7 +163,10 @@ class _TextDetectorState extends State<TextDetectorWidget> {
                   decoration: TextDecoration.underline,
                 ),
               ),
-              Center(child: Text(translatedText!))
+              Text(
+                translatedText!,
+                textAlign: TextAlign.center,
+              )
             ] else
               const Text(
                 'ERROR - Could not translate text',
@@ -171,16 +181,6 @@ class _TextDetectorState extends State<TextDetectorWidget> {
       child: child,
     );
   }
-
-  // A default close button, which calls [_initStuff] internally
-  Widget get _closeButton => Align(
-        alignment: Alignment.centerRight,
-        child: IconButton(
-          color: Colors.red,
-          onPressed: () => _initStuff(setNewState: true),
-          icon: const Icon(Icons.close),
-        ),
-      );
 
   /// Pick an image from given [source]
   Future<XFile?> pickImage(ImageSource source) {
@@ -250,5 +250,25 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     textRecognizer.close();
     textController.dispose();
     super.dispose();
+  }
+}
+
+// Simple wrapped [IconButton]
+class _ResetButton extends StatelessWidget {
+  const _ResetButton({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: IconButton(
+        color: Colors.red,
+        onPressed: () => onPressed,
+        icon: const Icon(Icons.close),
+      ),
+    );
   }
 }
