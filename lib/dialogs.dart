@@ -11,98 +11,101 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 /// Simple Dialogs class, which uses internally [navigatorKey] for BuildContext reference
 class AppDialogs {
   const AppDialogs();
-  final Widget _spacer = const Spacer();
-  final Widget _divider = const VerticalDivider();
 
-  Future<bool> showDialog(String title, String message) async {
+  Future<bool> showYesNoDialog(String title, String message) async {
     assert(navigatorKey.currentContext != null,
         'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
 
     return await showCupertinoDialog<bool>(
           context: navigatorKey.currentContext!,
-          builder: (BuildContext context) => Material(
-            child: Column(
-              children: <Widget>[
-                _spacer,
-                Center(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                _divider,
-                Center(
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const _YesNoButtons(),
-                const _CloseButton(),
-                _spacer,
-              ],
-            ),
+          builder: (BuildContext context) => _DialogWidget(
+            title: title,
+            message: message,
+            additionalWidgetBuilder: (BuildContext context) => const <Widget>[
+              _YesNoButtons(),
+              _CloseButton(),
+            ],
           ),
         ) ==
         true;
   }
 
-  Future<String> languageCode(String title, String message,
+  Future<String> retrieveLanguageCodeDialog(String title, String message,
       TextEditingController textController) async {
     assert(navigatorKey.currentContext != null,
         'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
 
     await showCupertinoDialog<String>(
       context: navigatorKey.currentContext!,
-      builder: (BuildContext context) => Scaffold(
-        resizeToAvoidBottomInset: true,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      builder: (BuildContext context) => _DialogWidget(
+        title: title,
+        message: message,
+        additionalWidgetBuilder: (BuildContext context) => <Widget>[
+          TextField(
+            controller: textController,
+          ),
+          const _OkButton(),
+        ],
+      ),
+    );
+    return textController.text;
+  }
+}
+
+typedef ListWidgetBuilder = List<Widget> Function(BuildContext context);
+
+// Simple Dialog Widget - [Scaffold] widget with a [Column]
+class _DialogWidget extends StatelessWidget {
+  const _DialogWidget({
+    Key? key,
+    required this.title,
+    required this.message,
+    required this.additionalWidgetBuilder,
+    this.spacer = const Spacer(),
+    this.divider = const VerticalDivider(),
+  }) : super(key: key);
+  final String title;
+  final String message;
+  final Widget spacer;
+  final Widget divider;
+  final ListWidgetBuilder additionalWidgetBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Material(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              _spacer,
-              Center(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+              spacer,
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              _divider,
-              Center(
-                child: Text(
-                  message,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+              divider,
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              TextField(
-                controller: textController,
-              ),
-              TextButton(
-                onPressed: Navigator.of(context).maybePop,
-                child: const Text(
-                  'Ok',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              _spacer,
+              ...additionalWidgetBuilder(context),
+              spacer,
             ],
           ),
         ),
       ),
     );
-    return textController.text;
   }
 }
 
@@ -147,6 +150,22 @@ class _CloseButton extends StatelessWidget {
       child: const Text(
         'Exit App',
         style: TextStyle(fontSize: 16, color: Colors.blue),
+      ),
+    );
+  }
+}
+
+// Simple ok button
+class _OkButton extends StatelessWidget {
+  const _OkButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: Navigator.of(context).maybePop,
+      child: const Text(
+        'Ok',
+        style: TextStyle(fontSize: 16),
       ),
     );
   }

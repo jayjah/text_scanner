@@ -74,7 +74,7 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     // ensure it gets called on next frame
     Future<void>.microtask(() async {
       // get image source from dialog
-      final ImageSource imageSource = (await widget.dialogHandler.showDialog(
+      final ImageSource imageSource = (await widget.dialogHandler.showYesNoDialog(
               'Pick image',
               'Do you want to pick an image from gallery?\nDefault is going to pick an image from camera.'))
           ? ImageSource.gallery
@@ -82,7 +82,8 @@ class _TextDetectorState extends State<TextDetectorWidget> {
 
       // get language identifier code from dialog, e.G. fr for french
       //  this identifier code indicates language, which should be actually the language from the text in the image itself
-      languageIdentifier = await widget.dialogHandler.languageCode(
+      languageIdentifier =
+          await widget.dialogHandler.retrieveLanguageCodeDialog(
         'Language',
         'Which language should be translated from?\nImportant: Just specify language identifier, e.G. English=en, french=fr, italian=it, espanol=es, portuguese=pt etc.',
         textController,
@@ -208,8 +209,6 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     _loading = false;
     _translating = true;
     if (mounted) setState(() {});
-
-    //translateText(fromLanguage: languageIdentifier!, toLanguage: 'en');
   }
 
   /// Translates text from [textInImage] and saves the translated text text into [translatedText]
@@ -237,12 +236,6 @@ class _TextDetectorState extends State<TextDetectorWidget> {
       translatedText = await mlTranslator.translateText(textInImage!);
     } catch (_) {
       debugPrint('ERROR while translating text: $_');
-
-      // use another translate mechanism to translate given text
-      /*final Translator anotherTranslator =
-          Translator(from: fromLanguage, to: toLanguage);
-      translatedText = await anotherTranslator.translate(textInImage!);
-      anotherTranslator.dispose();*/
     } finally {
       // mlTranslator.close();
     }
