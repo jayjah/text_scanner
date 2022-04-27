@@ -208,7 +208,7 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     // update widget state
     _loading = false;
     _translating = true;
-    if (mounted) setState(() {});
+    setState(() {});
   }
 
   /// Translates text from [textInImage] and saves the translated text text into [translatedText]
@@ -223,10 +223,11 @@ class _TextDetectorState extends State<TextDetectorWidget> {
     // ensure some text where found in the image, otherwise stop here
     if (textInImage == null) {
       _translating = false;
-      if (mounted) setState(() {});
+      setState(() {});
       return;
     }
 
+    // TODO(jayjah): fix re instantiation of OnDeviceTranslator -> this currently may lead to memory leak. As close() method is not called as well!
     // translate text with google ml kit
     final OnDeviceTranslator mlTranslator = OnDeviceTranslator(
       sourceLanguage: fromLanguage,
@@ -236,13 +237,22 @@ class _TextDetectorState extends State<TextDetectorWidget> {
       translatedText = await mlTranslator.translateText(textInImage!);
     } catch (_) {
       debugPrint('ERROR while translating text: $_');
-    } finally {
-      // mlTranslator.close();
-    }
+    } /*finally {
+       mlTranslator.close();
+    }*/
 
     // update state
     _translating = false;
-    if (mounted) setState(() {});
+    setState(() {});
+  }
+
+  // Overwrite setState
+  //  It ensure setState is only called when widget is [mounted]
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+
+    super.setState(fn);
   }
 
   @override
