@@ -1,0 +1,40 @@
+name: Test package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        sdk: [stable]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Analyze code
+        run: dart analyze --fatal-infos
+
+      - name: Format code
+        run: flutter format --set-exit-if-changed .
+
+      - name: Build apk
+        run: flutter build apk
+
+      - uses: actions/upload-artifact@v1
+        with:
+          # Name of the command/step.
+          name: release-apk
+          # Path to the release apk.
+          path: build/app/outputs/apk/release/app-release.apk
