@@ -276,7 +276,7 @@ class _ResetButton extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: IconButton(
         color: Colors.red,
-        onPressed: () => onPressed,
+        onPressed: onPressed,
         icon: const Icon(Icons.close),
       ),
     );
