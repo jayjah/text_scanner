@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:text_in_image_detector/dialogs.dart';
-import 'package:text_in_image_detector/text_detector.dart';
+import 'package:text_in_image_detector/state/text_detector_controller.dart';
+import 'package:text_in_image_detector/state/text_detector_widget.dart';
 
 /// Main entry point - just starts below [App] widget
 Future<void> main() async {
@@ -17,10 +18,17 @@ class App extends StatelessWidget {
       title: 'Text Detector',
       navigatorKey: navigatorKey,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          brightness: Brightness.dark,
+          primary: Colors.deepOrangeAccent,
+        ),
+        useMaterial3: true,
       ),
-      home: const TextDetectorWidget(
-        dialogHandler: AppDialogs(),
+      home: TextDetectorWidget(
+        textScannerController: TextDetectorController(
+          dialogHandler: const AppDialogs(),
+        )..startScan(),
       ),
     );
   }
