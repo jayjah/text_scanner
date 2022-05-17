@@ -10,8 +10,24 @@ Future<void> main() async {
   runApp(const App());
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final TextDetectorController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller =TextDetectorController(
+      dialogHandler: const AppDialogs(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,10 +42,14 @@ class App extends StatelessWidget {
         useMaterial3: true,
       ),
       home: TextDetectorWidget(
-        textScannerController: TextDetectorController(
-          dialogHandler: const AppDialogs(),
-        )..startScan(),
+        textScannerController: controller..startScan(),
       ),
     );
+  }
+
+  @override
+  Future<void> dispose() async {
+    await controller.dispose();
+    super.dispose();
   }
 }

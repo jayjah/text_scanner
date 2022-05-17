@@ -12,7 +12,10 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 class AppDialogs {
   const AppDialogs();
 
-  Future<bool> showYesNoDialog(String title, String message) async {
+  Future<bool> showYesNoDialog(
+    final String title,
+    final String message,
+  ) async {
     assert(navigatorKey.currentContext != null,
         'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
 
@@ -30,8 +33,11 @@ class AppDialogs {
         true;
   }
 
-  Future<String> retrieveLanguageCodeDialog(String title, String message,
-      TextEditingController textController) async {
+  Future<String> retrieveLanguageCodeDialog(
+    final String title,
+    final String message,
+    final TextEditingController textController,
+  ) async {
     assert(navigatorKey.currentContext != null,
         'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
 

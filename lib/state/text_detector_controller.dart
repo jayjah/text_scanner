@@ -25,11 +25,7 @@ extension _Translation on String {
   }
 }
 
-abstract class TextScanner {
-  Future<void> startScan({bool resetState = false});
-}
-
-class TextDetectorController with ChangeNotifier implements TextScanner {
+class TextDetectorController with ChangeNotifier {
   TextDetectorController({
     required this.dialogHandler,
   });
@@ -51,8 +47,7 @@ class TextDetectorController with ChangeNotifier implements TextScanner {
   String? get textFromImage => _textInImage;
   String? get translatedText => _translatedText;
 
-  @override
-  Future<void> startScan({bool resetState = false}) async {
+  Future<void> startScan({final bool resetState = false}) async {
     _loading = true;
     _translating = false;
     _textInImage = null;
@@ -92,13 +87,13 @@ class TextDetectorController with ChangeNotifier implements TextScanner {
   }
 
   /// Pick an image from given [source]
-  Future<XFile?> _pickImage(ImageSource source) {
+  Future<XFile?> _pickImage(final ImageSource source) {
     return ImagePicker().pickImage(source: source);
   }
 
   /// Parse text from given [value] and saves it into [_textInImage]
   ///   Internal widget state gets updated afterwards
-  Future<void> _parseTextFromImage(XFile? value) async {
+  Future<void> _parseTextFromImage(final XFile? value) async {
     if (value == null) return;
 
     // init google ml kit with text detector
@@ -122,9 +117,10 @@ class TextDetectorController with ChangeNotifier implements TextScanner {
 
   /// Translates text from [_textInImage] and saves the translated text text into [translatedText]
   ///   Internal widget state gets updated afterwards
-  Future<void> _translateText(
-      {required TranslateLanguage toLanguage,
-      required TranslateLanguage fromLanguage}) async {
+  Future<void> _translateText({
+    required final TranslateLanguage toLanguage,
+    required final TranslateLanguage fromLanguage,
+  }) async {
     // just print some stuff in debug mode
     debugPrint('Text in image: $_textInImage');
     debugPrint('ToLanguage: $toLanguage; fromLanguage: $fromLanguage');
@@ -160,7 +156,7 @@ class TextDetectorController with ChangeNotifier implements TextScanner {
   }
 
   @override
-  bool operator ==(Object other) =>
+  bool operator ==(final Object other) =>
       identical(this, other) ||
       other is TextDetectorController &&
           runtimeType == other.runtimeType &&
