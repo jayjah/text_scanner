@@ -23,7 +23,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    controller =TextDetectorController(
+    controller = TextDetectorController(
       dialogHandler: const AppDialogs(),
     );
   }
