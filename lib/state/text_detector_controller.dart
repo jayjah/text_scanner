@@ -94,7 +94,11 @@ class TextDetectorController with ChangeNotifier {
   /// Parse text from given [value] and saves it into [_textInImage]
   ///   Internal widget state gets updated afterwards
   Future<void> _parseTextFromImage(final XFile? value) async {
-    if (value == null) return;
+    if (value == null) {
+      _loading = false;
+      notifyListeners();
+      return;
+    }
 
     // init google ml kit with text detector
     try {
