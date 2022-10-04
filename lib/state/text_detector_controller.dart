@@ -19,6 +19,12 @@ extension _Translation on String {
         return TranslateLanguage.spanish;
       case 'de':
         return TranslateLanguage.german;
+      case 'sl':
+        return TranslateLanguage.slovenian;
+      case 'nl':
+        return TranslateLanguage.dutch;
+      case 'pl':
+        return TranslateLanguage.polish;
       default:
         return TranslateLanguage.english;
     }
