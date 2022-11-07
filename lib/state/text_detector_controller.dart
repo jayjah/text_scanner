@@ -170,11 +170,7 @@ class TextDetectorController with ChangeNotifier {
       identical(this, other) ||
       other is TextDetectorController &&
           runtimeType == other.runtimeType &&
-          _loading == other._loading &&
-          _translating == other._translating &&
-          _textInImage == other._textInImage &&
-          _translatedText == other._translatedText &&
-          _languageIdentifier == other._languageIdentifier;
+          hashCode == other.hashCode;
 
   @override
   int get hashCode =>
