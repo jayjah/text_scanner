@@ -30,7 +30,6 @@ class TextDetectorController with ChangeNotifier {
     _textInImage = null;
     _translatedText = null;
     _languageIdentifier = null;
-    //_textEditingController.text = 'fr';
     if (resetState) notifyListeners();
 
     // Ensure it gets called on next frame
