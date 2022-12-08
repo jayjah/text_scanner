@@ -12,16 +12,13 @@ import 'package:text_in_image_detector/state/text_detector_controller.dart';
 
 class TextDetectorWidget extends StatelessWidget {
   const TextDetectorWidget({
-    Key? key,
+    super.key,
     required this.textScannerController,
     this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-    this.spacerWidget = const SizedBox(
-      height: 55,
-    ),
-    this.loadingWidget = const Center(
-      child: CircularProgressIndicator.adaptive(),
-    ),
-  }) : super(key: key);
+    this.spacerWidget = const SizedBox(height: 55),
+    this.loadingWidget =
+        const Center(child: CircularProgressIndicator.adaptive()),
+  });
   final TextDetectorController textScannerController;
   final EdgeInsets padding;
   final Widget spacerWidget;
@@ -106,6 +103,7 @@ class TextDetectorWidget extends StatelessWidget {
           return child;
         },
         child: _ResetButton(
+          key: const ValueKey<String>('_reset_'),
           onPressed: () => textScannerController.startScan(
             resetState: true,
           ),
@@ -118,9 +116,9 @@ class TextDetectorWidget extends StatelessWidget {
 // Simple wrapped [IconButton]
 class _ResetButton extends StatelessWidget {
   const _ResetButton({
-    Key? key,
+    super.key,
     required this.onPressed,
-  }) : super(key: key);
+  });
   final VoidCallback onPressed;
   @override
   Widget build(BuildContext context) {

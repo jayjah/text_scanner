@@ -1,8 +1,9 @@
-// ignore_for_file: avoid_classes_with_only_static_members, unused_element
+// ignore_for_file: unused_element
 
 import 'package:flutter/cupertino.dart' show showCupertinoDialog;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemChannels;
+import 'package:google_ml_kit/google_ml_kit.dart';
 
 /// Navigator Key
 ///   Should be used in a [MaterialApp], otherwise [AppDialogs] will fail to show any dialog!
@@ -33,43 +34,73 @@ class AppDialogs {
         true;
   }
 
-  Future<String> retrieveLanguageCodeDialog(
+  Future<TranslateLanguage?> retrieveLanguageInImageDialog(
     final String title,
     final String message,
-    final TextEditingController textController,
   ) async {
     assert(navigatorKey.currentContext != null,
         'navigatorKeys context is NULL, which leads to misuse of navigatorKey. Use navigatorKey in MaterialApp therefore');
 
-    await showCupertinoDialog<String>(
+    final GlobalKey<_DropDownMenuState> key = GlobalKey<_DropDownMenuState>();
+    await showCupertinoDialog<void>(
       context: navigatorKey.currentContext!,
       builder: (BuildContext context) => _DialogWidget(
         title: title,
         message: message,
         additionalWidgetBuilder: (BuildContext context) => <Widget>[
-          TextField(
-            controller: textController,
-          ),
+          _DropDownMenu(key: key),
           const _OkButton(),
         ],
       ),
     );
-    return textController.text;
+    return key.currentState?.value;
   }
 }
 
 typedef ListWidgetBuilder = List<Widget> Function(BuildContext context);
 
+class _DropDownMenu extends StatefulWidget {
+  const _DropDownMenu({super.key});
+
+  @override
+  State<_DropDownMenu> createState() => _DropDownMenuState();
+}
+
+class _DropDownMenuState extends State<_DropDownMenu> {
+  TranslateLanguage? value;
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<TranslateLanguage>(
+      items: TranslateLanguage.values
+          .map(
+            (TranslateLanguage e) => DropdownMenuItem<TranslateLanguage>(
+              value: e,
+              child: Text(e.name),
+            ),
+          )
+          .toList(growable: false),
+      onChanged: (TranslateLanguage? item) {
+        if (mounted)
+          // ignore: curly_braces_in_flow_control_structures
+          setState(() {
+            value = item;
+          });
+      },
+      value: value,
+    );
+  }
+}
+
 // Simple Dialog Widget - [Scaffold] widget with a [Column]
 class _DialogWidget extends StatelessWidget {
   const _DialogWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     required this.additionalWidgetBuilder,
     this.spacer = const Spacer(),
     this.divider = const VerticalDivider(),
-  }) : super(key: key);
+  });
   final String title;
   final String message;
   final Widget spacer;
@@ -117,7 +148,7 @@ class _DialogWidget extends StatelessWidget {
 
 // Simple yes - no buttons
 class _YesNoButtons extends StatelessWidget {
-  const _YesNoButtons({Key? key}) : super(key: key);
+  const _YesNoButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +177,7 @@ class _YesNoButtons extends StatelessWidget {
 
 // Simple close app button
 class _CloseButton extends StatelessWidget {
-  const _CloseButton({Key? key}) : super(key: key);
+  const _CloseButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +194,7 @@ class _CloseButton extends StatelessWidget {
 
 // Simple ok button
 class _OkButton extends StatelessWidget {
-  const _OkButton({Key? key}) : super(key: key);
+  const _OkButton({super.key});
 
   @override
   Widget build(BuildContext context) {

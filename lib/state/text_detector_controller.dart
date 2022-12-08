@@ -1,35 +1,7 @@
-import 'package:flutter/material.dart'
-    show ChangeNotifier, TextEditingController, debugPrint;
+import 'package:flutter/material.dart' show ChangeNotifier, debugPrint;
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:text_in_image_detector/dialogs.dart' show AppDialogs;
-
-extension _Translation on String {
-  TranslateLanguage get translationLanguage {
-    switch (this) {
-      case 'fr':
-        return TranslateLanguage.french;
-      case 'gr':
-        return TranslateLanguage.greek;
-      case 'it':
-        return TranslateLanguage.italian;
-      case 'pt':
-        return TranslateLanguage.portuguese;
-      case 'es':
-        return TranslateLanguage.spanish;
-      case 'de':
-        return TranslateLanguage.german;
-      case 'sl':
-        return TranslateLanguage.slovenian;
-      case 'nl':
-        return TranslateLanguage.dutch;
-      case 'pl':
-        return TranslateLanguage.polish;
-      default:
-        return TranslateLanguage.english;
-    }
-  }
-}
 
 class TextDetectorController with ChangeNotifier {
   TextDetectorController({
@@ -38,7 +10,6 @@ class TextDetectorController with ChangeNotifier {
   final AppDialogs dialogHandler;
   final TextRecognizer _textRecognizer =
       TextRecognizer(script: TextRecognitionScript.latin);
-  final TextEditingController _textEditingController = TextEditingController();
   OnDeviceTranslator? _mlTranslator;
 
   // internal state variables
@@ -46,7 +17,7 @@ class TextDetectorController with ChangeNotifier {
   bool _translating = false;
   String? _textInImage;
   String? _translatedText;
-  String? _languageIdentifier;
+  TranslateLanguage? _languageIdentifier;
 
   bool get isLoading => _loading;
   bool get isTranslating => _translating;
@@ -59,7 +30,7 @@ class TextDetectorController with ChangeNotifier {
     _textInImage = null;
     _translatedText = null;
     _languageIdentifier = null;
-    _textEditingController.text = 'fr';
+    //_textEditingController.text = 'fr';
     if (resetState) notifyListeners();
 
     // Ensure it gets called on next frame
@@ -73,10 +44,9 @@ class TextDetectorController with ChangeNotifier {
 
       // get language identifier code from dialog, e.G. fr for french
       //  this identifier code indicates language, which should be actually the language from the text in the image itself
-      _languageIdentifier = await dialogHandler.retrieveLanguageCodeDialog(
+      _languageIdentifier = await dialogHandler.retrieveLanguageInImageDialog(
         'Language',
-        'Which language should be translated from?\nImportant: Just specify language identifier, e.G. English=en, french=fr, italian=it, espanol=es, portuguese=pt etc.',
-        _textEditingController,
+        'Which language should be translated from?',
       );
 
       // 1. pick an image
@@ -87,7 +57,7 @@ class TextDetectorController with ChangeNotifier {
           .catchError((Object error, StackTrace? stackTrace) {
         debugPrint('Error happened; $error; stackTrace: $stackTrace');
       }).whenComplete(() => _translateText(
-              fromLanguage: _languageIdentifier!.translationLanguage,
+              fromLanguage: _languageIdentifier,
               toLanguage: TranslateLanguage.english));
     });
   }
@@ -129,14 +99,16 @@ class TextDetectorController with ChangeNotifier {
   ///   Internal widget state gets updated afterwards
   Future<void> _translateText({
     required final TranslateLanguage toLanguage,
-    required final TranslateLanguage fromLanguage,
+    required final TranslateLanguage? fromLanguage,
   }) async {
     // just print some stuff in debug mode
     debugPrint('Text in image: $_textInImage');
     debugPrint('ToLanguage: $toLanguage; fromLanguage: $fromLanguage');
 
     // ensure some text where found in the image, otherwise stop here
-    if (_textInImage == null || _textInImage!.isEmpty == true) {
+    if (_textInImage == null ||
+        _textInImage!.isEmpty == true ||
+        fromLanguage == null) {
       _translating = false;
       notifyListeners();
       return;
@@ -184,7 +156,6 @@ class TextDetectorController with ChangeNotifier {
   Future<void> dispose() async {
     await _textRecognizer.close();
     await _mlTranslator?.close();
-    _textEditingController.dispose();
     super.dispose();
   }
 }
