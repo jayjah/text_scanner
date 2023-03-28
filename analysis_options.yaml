@@ -58,7 +58,6 @@ analyzer:
     invalid_factory_annotation: error
     invalid_factory_method_impl: error
     invalid_literal_annotation: error
-    invalid_override_different_default_values_named: error
     invalid_override_of_non_virtual_member: error
     invalid_required_named_param: error
     invalid_required_optional_positional_param: error
@@ -147,7 +146,6 @@ linter:
     - empty_statements
     - hash_and_equals
     - implementation_imports
-    - invariant_booleans
     - iterable_contains_unrelated_type
     - join_return_with_assignment
     - library_names

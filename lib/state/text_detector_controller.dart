@@ -29,7 +29,7 @@ class TextDetectorController with ChangeNotifier {
     _translating = false;
     _textInImage = null;
     _translatedText = null;
-    _languageIdentifier = null;
+    //_languageIdentifier = null;
     if (resetState) notifyListeners();
 
     // Ensure it gets called on next frame
@@ -80,8 +80,8 @@ class TextDetectorController with ChangeNotifier {
       final RecognizedText recognizedText = await _textRecognizer
           .processImage(InputImage.fromFilePath(value.path));
       _textInImage = recognizedText.text;
-    } catch (_) {
-      debugPrint('ERROR while processing image: $_');
+    } catch (e) {
+      debugPrint('ERROR while processing image: $e');
     }
 
     // get detected language
